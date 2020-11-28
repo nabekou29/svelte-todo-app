@@ -1,18 +1,17 @@
 <script lang="ts">
-  import { slide, blur, scale } from 'svelte/transition';
   import { flip } from 'svelte/animate';
 
-  const Priority = {
+  const Priorities = {
     High: 1,
     Mid: 2,
     Low: 3,
   } as const;
-  type Priority = typeof Priority[keyof typeof Priority];
+  type Priority = typeof Priorities[keyof typeof Priorities];
 
   const priorityNames = {
-    [Priority.High]: '高',
-    [Priority.Mid]: '中',
-    [Priority.Low]: '低',
+    [Priorities.High]: '高',
+    [Priorities.Mid]: '中',
+    [Priorities.Low]: '低',
   } as const;
 
   type TodoItem = {
@@ -40,8 +39,8 @@
   };
 
   // 完了処理
-  const completeItem = (index) => {
-    todoList = todoList.filter((_, i) => i !== index);
+  const completeItem = (id: number) => {
+    todoList = todoList.filter((todo) => todo.id !== id);
   };
 </script>
 
@@ -79,19 +78,19 @@
         <div>アイテムを作成してください</div>
       {:else}
         <ul class="list-group">
-          {#each sortedTodoList as todoItem, index (todoItem.id)}
-            <li transition:blur class="list-group-item align-middle">
+          {#each sortedTodoList as todoItem (todoItem.id)}
+            <li animate:flip class="list-group-item align-middle">
               <span
                 class="badge m-1"
-                class:badge-danger={todoItem.priority === Priority.High}
-                class:badge-warning={todoItem.priority === Priority.Mid}
-                class:badge-success={todoItem.priority === Priority.Low}>
+                class:badge-danger={todoItem.priority === Priorities.High}
+                class:badge-warning={todoItem.priority === Priorities.Mid}
+                class:badge-success={todoItem.priority === Priorities.Low}>
                 {priorityNames[todoItem.priority]}
               </span>
               {todoItem.title}
               <button
                 class="btn btn-sm btn-success float-right"
-                on:click={() => completeItem(index)}>
+                on:click={() => completeItem(todoItem.id)}>
                 ×
               </button>
             </li>
